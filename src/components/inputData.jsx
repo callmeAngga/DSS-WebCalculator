@@ -177,22 +177,27 @@ const InputData = ({ onCalculate, method }) => {
                     </tr>
                 </tbody>
             </table>
-            <table className="min-w-full text-sm text-gray-400   text-center">
-                <thead className=" bg-gray-800 text-gray-400 uppercase tracking-wide text-xs ">
-                    <tr className="divide-x divide-gray-600">
-                        <th className="px-6 py-3">
-                            Criteria
+            <table className="min-w-full text-sm text-gray-400 text-center divide-x divide-gray-600">
+                <thead className="bg-gray-800 text-gray-400 uppercase tracking-wide text-xs">
+                    <tr>
+                        <th className="px-9 py-3 border-r border-gray-600" rowSpan="2">
+                            Item
                         </th>
-                        {Array(cols).fill().map((_, index) => (
-                            <th key={index} scope="col" className=" px-6 py-3">
+                        <th className="px-9 py-3 border-b border-gray-600" colSpan={cols}>
+                            Kriteria
+                        </th>
+                    </tr>
+                    <tr>
+                        {Array.from({ length: cols }, (_, index) => (
+                            <th key={index} scope="col" className="px-9 py-3 border-l border-r border-gray-600">
                                 C{index + 1}
                             </th>
                         ))}
                     </tr>
                 </thead>
-                <tbody className='divide-y divide-gray-600'>
+                <tbody className="divide-y divide-gray-600">
                     {tableData.map((row, rowIndex) => (
-                        <tr key={rowIndex} className='border-gray-800 bg-gray-700 divide-x divide-gray-600'>
+                        <tr key={rowIndex} className="border-gray-800 bg-gray-700 divide-x divide-gray-600">
                             <th scope="row" className="px-6 py-3 whitespace-nowrap font-medium text-gray-400">
                                 A{rowIndex + 1}
                             </th>
@@ -213,6 +218,7 @@ const InputData = ({ onCalculate, method }) => {
                     ))}
                 </tbody>
             </table>
+
             <div className="flex space-x-4">
                 <button
                     onClick={handleReset}
