@@ -5,13 +5,7 @@ export function calculateWP(input) {
     const steps = [
         {
             title: "Input Data",
-            data: {
-                "Number of items": rows,
-                "Number of criteria": cols,
-                Weights: weights,
-                Types: types,
-                Values: values,
-            },
+            data: { rows, cols, weights, types, values },
         },
     ];
 
@@ -22,21 +16,28 @@ export function calculateWP(input) {
         data: normalizedWeights,
     });
 
-    // Step 3: Hitung Vektor S
-    const vectorS = calculateVectorS(values, normalizedWeights, types);
+    // Step 3: Normalisasi Matriks
+    const normalizedMatrix = normalizeMatrix(values, normalizedWeights, types);
+    steps.push({
+        title: "Normalized Matrix",
+        data: normalizedMatrix,
+    });
+
+    // Step 4: Hitung Vektor S
+    const vectorS = calculateVectorS(normalizedMatrix, types);
     steps.push({
         title: "Vector S",
         data: vectorS,
     });
 
-    // Step 4: Hitung Vektor V
+    // Step 5: Hitung Vektor V
     const vectorV = calculateVectorV(vectorS);
     steps.push({
         title: "Vector V",
         data: vectorV,
     });
 
-    // Step 5: Rangking
+    // Step 6: Rangking
     const ranking = rankAlternatives(vectorV);
     steps.push({
         title: "Final Ranking",
@@ -54,13 +55,17 @@ function normalizeWeights(weights) {
     return weights.map((w) => w / sum);
 }
 
-function calculateVectorS(values, weights, types) {
+function normalizeMatrix(values, weights, types) {
     return values.map((row) =>
-        row.reduce(
-            (acc, val, i) =>
-                acc * Math.pow(val, types[i] === "benefit" ? weights[i] : -weights[i]),
-            1
-        )
+        row.map((val, j) => {
+            return types[j] === "benefit" ? Math.pow(val, weights[j]) : Math.pow(val, -weights[j]);
+        })
+    );
+}
+
+function calculateVectorS(normalizedMatrix, types) {
+    return normalizedMatrix.map((row) =>
+        row.reduce((acc, val) => acc * val, 1)
     );
 }
 

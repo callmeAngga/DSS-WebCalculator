@@ -11,7 +11,37 @@ const ResultDisplay = ({ result }) => {
             case "Normalized Weights":
                 return (
                     <Table
-                        headers={["Criteria", "Value"]}
+                        headers={["Kriteria", "Weights"]}
+                        data={step.data.map((value, index) => [
+                            `C${index + 1}`,
+                            value.toFixed(4)
+                        ])}
+                    />
+                );
+            case "Normalized Matrix":
+                return (
+                    <Table
+                        headers={["Item", ...Array.from({ length: step.data[0].length }, (_, i) => `C${i + 1}`)]}
+                        data={step.data.map((row, rowIndex) => [
+                            `A${rowIndex + 1}`,
+                            ...row.map(value => (typeof value === 'number' ? value.toFixed(4) : JSON.stringify(value)))
+                        ])}
+                    />
+                );
+            case "Weighted Normalized Matrix":
+                return (
+                    <Table
+                        headers={["Item", ...Array.from({ length: step.data[0].length }, (_, i) => `C${i + 1}`)]}
+                        data={step.data.map((row, rowIndex) => [
+                            `A${rowIndex + 1}`,
+                            ...row.map(value => (typeof value === 'number' ? value.toFixed(4) : JSON.stringify(value)))
+                        ])}
+                    />
+                );
+            case "Weighted Sum":
+                return (
+                    <Table
+                        headers={["Item", "Value"]}
                         data={step.data.map((value, index) => [
                             `C${index + 1}`,
                             value.toFixed(4)
@@ -21,9 +51,9 @@ const ResultDisplay = ({ result }) => {
             case "Vector S":
                 return (
                     <Table
-                        headers={["Criteria", "Value"]}
+                        headers={["Item", "Value"]}
                         data={step.data.map((value, index) => [
-                            `C${index + 1}`,
+                            `A${index + 1}`,
                             value.toFixed(4)
                         ])}
                     />
@@ -31,9 +61,41 @@ const ResultDisplay = ({ result }) => {
             case "Vector V":
                 return (
                     <Table
-                        headers={["Criteria", "Value"]}
+                        headers={["Item", "Value"]}
                         data={step.data.map((value, index) => [
-                            `C${index + 1}`,
+                            `A${index + 1}`,
+                            value.toFixed(4)
+                        ])}
+                    />
+                );
+            case "Ideal and Negative-Ideal Solutions":
+                return (
+                    <Table
+                        headers={["Type", ...Array.from({ length: step.data.ideal.length }, (_, i) => `C${i + 1}`)]}
+                        data={[
+                            ["A+", ...step.data.ideal.map(value => value.toFixed(4))],
+                            ["A-", ...step.data.negativeIdeal.map(value => value.toFixed(4))]
+                        ]}
+                    />
+                );
+
+            case "Separation Measures":
+                return (
+                    <Table
+                        headers={["Item", "D+", "D-"]}
+                        data={step.data.map((value, index) => [
+                            `A${index + 1}`,
+                            value.dPlus.toFixed(4),
+                            value.dMinus.toFixed(4)
+                        ])}
+                    />
+                );
+            case "Relative Closeness":
+                return (
+                    <Table
+                        headers={["Item", "Value"]}
+                        data={step.data.map((value, index) => [
+                            `A${index + 1}`,
                             value.toFixed(4)
                         ])}
                     />
@@ -43,7 +105,7 @@ const ResultDisplay = ({ result }) => {
                     <Table
                         headers={["Item", "Value", "Rank"]}
                         data={step.data.map((item) => [
-                            `C${item.index}`,
+                            `A${item.index}`,
                             item.value.toFixed(4),
                             item.rank
                         ])}
