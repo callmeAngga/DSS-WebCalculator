@@ -25,7 +25,6 @@ export default function App() {
                                 <DSSCalculator onCalculationResult={handleCalculationResult} />
                             </div>
                             <div className='w-96 h-full bg-slate-400 flex items-center justify-center p-4'>
-                                {/* <p>Ini nanti bagian petunjuk singkat</p> */}
                                 <div className="text-gray-800">
                                     <h2 className="text-xl font-bold mb-2">Quick Guide</h2>
                                     <ol className="list-decimal list-inside">

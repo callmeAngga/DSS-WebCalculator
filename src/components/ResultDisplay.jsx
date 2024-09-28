@@ -1,39 +1,71 @@
 import React from 'react';
+import Table from './Table';
 
 const ResultDisplay = ({ result }) => {
     if (!result) {
         return <p>No calculation results yet. Please use the calculator above.</p>;
     }
 
-    return (
-        <div className=" w-full text-white">
-            {result.steps.map((step, index) => (
-                <div key={index} className="mb-6">
-                    <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
+    const renderStepContent = (step) => {
+        switch (step.title) {
+            case "Normalized Weights":
+                return (
+                    <Table
+                        headers={["Criteria", "Value"]}
+                        data={step.data.map((value, index) => [
+                            `C${index + 1}`,
+                            value.toFixed(4)
+                        ])}
+                    />
+                );
+            case "Vector S":
+                return (
+                    <Table
+                        headers={["Criteria", "Value"]}
+                        data={step.data.map((value, index) => [
+                            `C${index + 1}`,
+                            value.toFixed(4)
+                        ])}
+                    />
+                );
+            case "Vector V":
+                return (
+                    <Table
+                        headers={["Criteria", "Value"]}
+                        data={step.data.map((value, index) => [
+                            `C${index + 1}`,
+                            value.toFixed(4)
+                        ])}
+                    />
+                );
+            case "Final Ranking":
+                return (
+                    <Table
+                        headers={["Item", "Value", "Rank"]}
+                        data={step.data.map((item) => [
+                            `C${item.index}`,
+                            item.value.toFixed(4),
+                            item.rank
+                        ])}
+                    />
+                );
+            default:
+                return (
                     <pre className="bg-gray-700 p-4 rounded-md overflow-x-auto">
                         {JSON.stringify(step.data, null, 2)}
                     </pre>
+                );
+        }
+    };
+
+    return (
+        <div className="w-full text-white">
+            {result.steps.filter(step => step.title !== "Input Data").map((step, index) => (
+                <div key={index} className="mb-6">
+                    <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
+                    {renderStepContent(step)}
                 </div>
             ))}
-            <h3 className="text-xl font-semibold mb-2">Final Ranking</h3>
-            <table className="min-w-full bg-gray-700">
-                <thead>
-                    <tr>
-                        <th className="px-4 py-2 border">Criteria</th>
-                        <th className="px-4 py-2 border">Value</th>
-                        <th className="px-4 py-2 border">Rank</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {result.result.map((item) => (
-                        <tr className='text-center' key={item.index}>
-                            <td className="px-4 py-2 border">C{item.index}</td>
-                            <td className="px-4 py-2 border">{item.value.toFixed(4)}</td>
-                            <td className="px-4 py-2 border">{item.rank}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
         </div>
     );
 };
