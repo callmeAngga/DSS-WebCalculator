@@ -11,7 +11,7 @@ const ResultDisplay = ({ result }) => {
             case "Normalized Weights":
                 return (
                     <Table
-                        headers={["Kriteria", "Weights"]}
+                        headers={["Criteria", "Weight"]}
                         data={step.data.map((value, index) => [
                             `C${index + 1}`,
                             value.toFixed(4)
@@ -21,7 +21,7 @@ const ResultDisplay = ({ result }) => {
             case "Normalized Matrix":
                 return (
                     <Table
-                        headers={["Item", ...Array.from({ length: step.data[0].length }, (_, i) => `C${i + 1}`)]}
+                        headers={["Alternative", ...Array.from({ length: step.data[0].length }, (_, i) => `C${i + 1}`)]}
                         data={step.data.map((row, rowIndex) => [
                             `A${rowIndex + 1}`,
                             ...row.map(value => (typeof value === 'number' ? value.toFixed(4) : JSON.stringify(value)))
@@ -31,7 +31,7 @@ const ResultDisplay = ({ result }) => {
             case "Weighted Normalized Matrix":
                 return (
                     <Table
-                        headers={["Item", ...Array.from({ length: step.data[0].length }, (_, i) => `C${i + 1}`)]}
+                        headers={["Alternative", ...Array.from({ length: step.data[0].length }, (_, i) => `C${i + 1}`)]}
                         data={step.data.map((row, rowIndex) => [
                             `A${rowIndex + 1}`,
                             ...row.map(value => (typeof value === 'number' ? value.toFixed(4) : JSON.stringify(value)))
@@ -41,7 +41,7 @@ const ResultDisplay = ({ result }) => {
             case "Weighted Sum":
                 return (
                     <Table
-                        headers={["Item", "Value"]}
+                        headers={["Alternative", "Value"]}
                         data={step.data.map((value, index) => [
                             `C${index + 1}`,
                             value.toFixed(4)
@@ -51,7 +51,7 @@ const ResultDisplay = ({ result }) => {
             case "Vector S":
                 return (
                     <Table
-                        headers={["Item", "Value"]}
+                        headers={["Alternative", "Value"]}
                         data={step.data.map((value, index) => [
                             `A${index + 1}`,
                             value.toFixed(4)
@@ -61,7 +61,7 @@ const ResultDisplay = ({ result }) => {
             case "Vector V":
                 return (
                     <Table
-                        headers={["Item", "Value"]}
+                        headers={["Alternative", "Value"]}
                         data={step.data.map((value, index) => [
                             `A${index + 1}`,
                             value.toFixed(4)
@@ -82,7 +82,7 @@ const ResultDisplay = ({ result }) => {
             case "Separation Measures":
                 return (
                     <Table
-                        headers={["Item", "D+", "D-"]}
+                        headers={["Alternative", "D+", "D-"]}
                         data={step.data.map((value, index) => [
                             `A${index + 1}`,
                             value.dPlus.toFixed(4),
@@ -93,7 +93,7 @@ const ResultDisplay = ({ result }) => {
             case "Relative Closeness":
                 return (
                     <Table
-                        headers={["Item", "Value"]}
+                        headers={["Alternative", "Value"]}
                         data={step.data.map((value, index) => [
                             `A${index + 1}`,
                             value.toFixed(4)
@@ -103,7 +103,7 @@ const ResultDisplay = ({ result }) => {
             case "Final Ranking":
                 return (
                     <Table
-                        headers={["Item", "Value", "Rank"]}
+                        headers={["Alternative", "Value", "Rank"]}
                         data={step.data.map((item) => [
                             `A${item.index}`,
                             item.value.toFixed(4),

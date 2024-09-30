@@ -143,7 +143,7 @@ const InputData = ({ onCalculate, method }) => {
 
                     <tr className="border-gray-800 bg-gray-700 divide-x divide-gray-600">
                         <td className="px-7 py-3 whitespace-nowrap font-medium bg-gray-800 text-gray-400">
-                            Type
+                            TYPE
                         </td>
                         {types.map((type, index) => (
                             <td key={index} className="px-6 py-3">
@@ -152,15 +152,15 @@ const InputData = ({ onCalculate, method }) => {
                                     onChange={(e) => handleTypeChange(e, index)}
                                     className="block w-full text-center bg-gray-700 focus:outline-none"
                                 >
-                                    <option value="benefit">Benefit</option>
-                                    <option value="cost">Cost</option>
+                                    <option value="benefit">BENEFIT</option>
+                                    <option value="cost">COST</option>
                                 </select>
                             </td>
                         ))}
                     </tr>
                     <tr className="border-gray-800 bg-gray-700 divide-x divide-gray-600">
                         <td className="px-7 py-3 whitespace-nowrap font-medium bg-gray-800 text-gray-400">
-                            Weight
+                            WEIGHT
                         </td>
                         {weights.map((weight, index) => (
                             <td key={index} className="px-6 py-3">
@@ -180,11 +180,11 @@ const InputData = ({ onCalculate, method }) => {
             <table className="min-w-full text-sm text-gray-400 text-center divide-x divide-gray-600">
                 <thead className="bg-gray-800 text-gray-400 uppercase tracking-wide text-xs">
                     <tr>
-                        <th className="px-9 py-3 border-r border-gray-600" rowSpan="2">
-                            Item
+                        <th className="px-3 py-3 border-r border-gray-600" rowSpan="2">
+                            Alternative
                         </th>
                         <th className="px-9 py-3 border-b border-gray-600" colSpan={cols}>
-                            Kriteria
+                            Criteria
                         </th>
                     </tr>
                     <tr>
