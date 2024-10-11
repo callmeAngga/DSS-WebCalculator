@@ -199,13 +199,6 @@ function multiplyMatrixByVector(matrix, vector) {
     );
 }
 
-// Helper function to rank alternatives based on final scores
-// function rankAlternatives(scores) {
-//     return scores
-//         .map((score, index) => ({ score, index: index + 1 })) // Attach original index (1-based)
-//         .sort((a, b) => b.score - a.score);  // Sort in descending order
-// }
-
 
 // Normalize Pairwise Matrix in AHP
 function normalizeMatrixAHP(pairWise) {

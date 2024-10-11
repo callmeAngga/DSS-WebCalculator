@@ -7,7 +7,6 @@ const InputData = ({ onCalculate, method }) => {
     const [weights, setWeights] = useState([]);
     const [types, setTypes] = useState([]);
     const [pairwiseComparisons, setPairwiseComparisons] = useState([]);
-    // const [subcriteriaCount, setSubcriteriaCount] = useState(Array(cols));
     const [subcriteriaPairwiseComparisons, setSubcriteriaPairwiseComparisons] = useState(Array(cols).fill([])
     );
     const inputRefs = useRef([]);
@@ -27,7 +26,6 @@ const InputData = ({ onCalculate, method }) => {
         setWeights(Array(cols).fill(0));
         setTypes(Array(cols).fill('benefit'));
         setPairwiseComparisons([]);
-        // setSubcriteriaCount(Array(cols));
         setSubcriteriaPairwiseComparisons(Array.from({ length: cols }, () => Array.from({ length: rows }, () => Array(rows).fill(1))));
     };
 
@@ -61,14 +59,9 @@ const InputData = ({ onCalculate, method }) => {
             const [numerator, denominator] = value.split('/');
             value = Number(numerator) / Number(denominator);
         } else {
-            value = Number(value); // If not a fraction, convert directly to number
+            value = Number(value);
         }
 
-        // Create unique keys for comparisons
-        // const keyAtoB = `${criterionA}-${criterionB}`;
-        // const keyBtoA = `${criterionB}-${criterionA}`;
-
-        // Update or add the comparison for criterionA < criterionB
         const existingComparisonAtoB = newComparisons.find(
             comp => comp.criterionA === criterionA && comp.criterionB === criterionB
         );
@@ -83,22 +76,20 @@ const InputData = ({ onCalculate, method }) => {
             });
         }
 
-        // Update or add the reverse comparison (criterionB < criterionA)
         const existingComparisonBtoA = newComparisons.find(
             comp => comp.criterionA === criterionB && comp.criterionB === criterionA
         );
 
         if (existingComparisonBtoA) {
-            existingComparisonBtoA.value = 1 / value; // Always update the reverse comparison
+            existingComparisonBtoA.value = 1 / value; 
         } else {
             newComparisons.push({
                 criterionA: criterionB,
                 criterionB: criterionA,
-                value: 1 / value, // Always store the reverse comparison
+                value: 1 / value,
             });
         }
 
-        // Save changes to state
         setPairwiseComparisons(newComparisons);
     };
 
@@ -106,7 +97,7 @@ const InputData = ({ onCalculate, method }) => {
         const comparison = pairwiseComparisons.find(
             comp => comp.criterionA === criterionA && comp.criterionB === criterionB
         );
-        return comparison ? comparison.value : "1"; // Nilai default adalah 1
+        return comparison ? comparison.value : "1"; 
     };
 
     const handleSubcriteriaPairwiseComparisonChange = (e, criterionIndex, subA, subB) => {
@@ -114,7 +105,6 @@ const InputData = ({ onCalculate, method }) => {
         const newComparisons = [...subcriteriaPairwiseComparisons];
 
         let comparisonValue;
-        // Jika ada nilai pecahan (misalnya 1/3), bagi sesuai nilai pecahan
         if (value.includes('/')) {
             const [numerator, denominator] = value.split('/');
             comparisonValue = Number(numerator) / Number(denominator);
@@ -122,9 +112,7 @@ const InputData = ({ onCalculate, method }) => {
             comparisonValue = Number(value);
         }
 
-        // Update nilai subA < subB
         newComparisons[criterionIndex][subA][subB] = comparisonValue;
-        // Update nilai subB < subA dengan kebalikan dari nilai di atas
         newComparisons[criterionIndex][subB][subA] = 1 / comparisonValue;
 
         setSubcriteriaPairwiseComparisons(newComparisons);
@@ -132,16 +120,10 @@ const InputData = ({ onCalculate, method }) => {
 
     const getSubcriteriaComparisonValue = (criterionIndex, subA, subB) => {
         const value = subcriteriaPairwiseComparisons[criterionIndex]?.[subB]?.[subA];
-        return value !== undefined ? value : 1; // Kembalikan 1 jika tidak ada nilai yang ditemukan
+        return value !== undefined ? value : 1;
     };
 
-    /*================================================================================ */
-
     const handleCalculate = () => {
-        // if (method != "AHP" && tableData.some(row => row.some(cell => cell === 0)) || weights.some(w => w === 0)) {
-        //     alert('Please fill all input fields before calculating.');
-        //     return;
-        // }
         if (!method) {
             alert('Please select a method before calculating.');
             return;
@@ -208,7 +190,7 @@ const InputData = ({ onCalculate, method }) => {
                         <button
                             onClick={decrementRows}
                             disabled={rows <= 2}
-                            className={`px-2 py-1 rounded ${rows <= 2 ? 'bg-gray-300' : 'bg-gray-700 hover:bg-gray-800 text-white'}`}
+                            className={`px-2 py-1 rounded ${rows <= 2 ? 'bg-secondary' : 'bg-primary hover:bg-primaryHover text-accent'}`}
                         >
                             -
                         </button>
@@ -216,7 +198,7 @@ const InputData = ({ onCalculate, method }) => {
                         <button
                             onClick={incrementRows}
                             disabled={rows >= 10}
-                            className={`px-2 py-1 rounded ${rows >= 9 ? 'bg-gray-300' : 'bg-gray-700 hover:bg-gray-800 text-white'}`}
+                            className={`px-2 py-1 rounded ${rows >= 9 ? 'bg-secondary' : 'bg-primary hover:bg-primaryHover text-accent'}`}
                         >
                             +
                         </button>
@@ -229,7 +211,7 @@ const InputData = ({ onCalculate, method }) => {
                         <button
                             onClick={decrementCols}
                             disabled={cols <= 2}
-                            className={`px-2 py-1 rounded ${cols <= 2 ? 'bg-gray-300' : 'bg-gray-700 hover:bg-gray-800 text-white'}`}
+                            className={`px-2 py-1 rounded ${cols <= 2 ? 'bg-secondary' : 'bg-primary hover:bg-primaryHover text-accent'}`}
                         >
                             -
                         </button>
@@ -237,7 +219,7 @@ const InputData = ({ onCalculate, method }) => {
                         <button
                             onClick={incrementCols}
                             disabled={cols >= 10}
-                            className={`px-2 py-1 rounded ${cols >= 9 ? 'bg-gray-300' : 'bg-gray-700 hover:bg-gray-800 text-white'}`}
+                            className={`px-2 py-1 rounded ${cols >= 9 ? 'bg-secondary' : 'bg-primary hover:bg-primaryHover text-accent'}`}
                         >
                             +
                         </button>
@@ -247,26 +229,26 @@ const InputData = ({ onCalculate, method }) => {
             {/* /*======================================= */}
             {method === "AHP" && (
                 <div>
-                    <table className="min-w-full text-sm text-gray-400 text-center divide-x divide-gray-600">
-                        <thead className="bg-gray-800 text-gray-400 uppercase tracking-wide text-xs">
+                    <table className="min-w-full text-sm text-accent text-center divide-y divide-accent">
+                        <thead className="bg-primary text-accent uppercase tracking-wide text-xs">
                             <tr>
-                                <th className="px-7 py-3 border-r border-gray-600" rowSpan="2">Criteria</th>
-                                <th className="px-7 py-3 border-b border-gray-600" colSpan={cols}>
+                                <th className="px-7 py-3 border-r border-accent" rowSpan="2">Criteria</th>
+                                <th className="px-7 py-3 border-b border-accent" colSpan={cols}>
                                     More Important Comparison
                                 </th>
                             </tr>
                             <tr>
                                 {Array.from({ length: cols }, (_, i) => i + 1).map(criterion => (
-                                    <th key={criterion} scope="col" className="px-7 py-3 border-l border-r border-gray-600">
+                                    <th key={criterion} scope="col" className="px-7 py-3">
                                         Compare to C{criterion}
                                     </th>
                                 ))}
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-600">
+                        <tbody className="divide-y divide-accent">
                             {Array.from({ length: cols }, (_, i) => i + 1).map(criterionA => (
-                                <tr key={criterionA} className="border-gray-800 bg-gray-700 divide-x divide-gray-600">
-                                    <td className="px-7 py-3 whitespace-nowrap font-medium bg-gray-700 text-gray-400">
+                                <tr key={criterionA} className="border-accent bg-secondary divide-x divide-accent">
+                                    <td className="px-7 py-3 whitespace-nowrap font-medium bg-secondary text-accent">
                                         C{criterionA}
                                     </td>
                                     {Array.from({ length: cols }, (_, j) => j + 1).map(criterionB => (
@@ -274,7 +256,7 @@ const InputData = ({ onCalculate, method }) => {
                                             {criterionA < criterionB ? (
                                                 <select
                                                     onChange={(e) => handlePairwiseComparisonChange(e, criterionA, criterionB)}
-                                                    className="block w-full text-center bg-gray-700 focus:outline-none"
+                                                    className="block w-full text-center bg-secondary focus:outline-none"
                                                 >
                                                     <option value="-" selected disabled>Choose</option>
                                                     <option value="1/9">1/9</option>
@@ -296,9 +278,9 @@ const InputData = ({ onCalculate, method }) => {
                                                     <option value="9">9</option>
                                                 </select>
                                             ) : criterionA === criterionB ? (
-                                                <span className="text-gray-500" value="1">1</span>
+                                                <span className="text-accent" value="1">1</span>
                                             ) : (
-                                                <span className="text-gray-500">
+                                                <span className="text-accent">
                                                     {1 / getComparisonValue(criterionB, criterionA)}
                                                 </span>
                                             )}
@@ -312,27 +294,27 @@ const InputData = ({ onCalculate, method }) => {
 
                     {Array.from({ length: cols }, (_, criterionIndex) => (
                         <div key={criterionIndex}>
-                            <h3 className="text-lg font-bold text-gray-300 mb-2">Subcriteria C{criterionIndex + 1}</h3>
-                            <table className="min-w-full text-sm text-gray-400 text-center divide-x divide-gray-600 mb-6">
-                                <thead className="bg-gray-800 text-gray-400 uppercase tracking-wide text-xs">
+                            <h3 className="text-lg font-bold text-accent mb-2">Subcriteria C{criterionIndex + 1}</h3>
+                            <table className="min-w-full text-sm text-accent text-center divide-y divide-accent mb-6">
+                                <thead className="bg-primary text-accent uppercase tracking-wide text-xs">
                                     <tr>
-                                        <th className="px-7 py-3 border-r border-gray-600" rowSpan="2">Alternative</th>
-                                        <th className="px-7 py-3 border-b border-gray-600" colSpan={rows}>
+                                        <th className="px-7 py-3 border-r border-accent" rowSpan="2">Alternative</th>
+                                        <th className="px-7 py-3 border-b border-accent" colSpan={rows}>
                                             More Important Comparison
                                         </th>
                                     </tr>
                                     <tr>
                                         {Array.from({ length: rows }, (_, subIndex) => (
-                                            <th key={subIndex} className="px-9 py-3 border-l border-r border-gray-600">
+                                            <th key={subIndex} className="px-9 py-3">
                                                 Compare to A{subIndex + 1}
                                             </th>
                                         ))}
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-600">
+                                <tbody className="divide-y divide-accent">
                                     {Array.from({ length: rows }, (_, subA) => (
-                                        <tr key={subA} className="border-gray-800 bg-gray-700 divide-x divide-gray-600">
-                                            <td className="px-7 py-3 whitespace-nowrap font-medium bg-gray-700 text-gray-400">
+                                        <tr key={subA} className="border-gray-800 bg-secondary divide-x divide-accent">
+                                            <td className="px-7 py-3 whitespace-nowrap font-medium bg-secondary text-accent">
                                                 A{subA + 1}
                                             </td>
                                             {Array.from({ length: rows }, (_, subB) => (
@@ -340,7 +322,7 @@ const InputData = ({ onCalculate, method }) => {
                                                     {subA < subB ? (
                                                         <select
                                                             onChange={(e) => handleSubcriteriaPairwiseComparisonChange(e, criterionIndex, subA, subB)}
-                                                            className="block w-full text-center bg-gray-700 focus:outline-none"
+                                                            className="block w-full text-center bg-secondary focus:outline-none"
                                                         >
                                                             <option value="1/9">1/9</option>
                                                             <option value="1/8">1/8</option>
@@ -362,9 +344,9 @@ const InputData = ({ onCalculate, method }) => {
                                                             <option value="-" selected>Choose</option>
                                                         </select>
                                                     ) : subA === subB ? (
-                                                        <span className="text-gray-500">1</span>
+                                                        <span className="text-accent">1</span>
                                                     ) : (
-                                                        <span className="text-gray-500">
+                                                        <span className="text-accent">
                                                             {1 / getSubcriteriaComparisonValue(criterionIndex, subA, subB)}
                                                         </span>
                                                     )}
@@ -385,11 +367,11 @@ const InputData = ({ onCalculate, method }) => {
             {method !== "AHP" && (
                 <>
 
-                    <table className="min-w-full text-sm text-gray-400 text-center">
-                        <tbody className="divide-y divide-gray-600">
+                    <table className="min-w-full text-sm text-accent text-center">
+                        <tbody className="divide-y divide-accent">
 
-                            <tr className="border-gray-800 bg-gray-700 divide-x divide-gray-600">
-                                <td className="px-7 py-3 whitespace-nowrap font-medium bg-gray-800 text-gray-400">
+                            <tr className="border-gray-800 bg-secondary divide-x divide-accent">
+                                <td className="px-7 py-3 whitespace-nowrap font-medium bg-primary text-accent">
                                     Type
                                 </td>
                                 {types.map((type, index) => (
@@ -397,7 +379,7 @@ const InputData = ({ onCalculate, method }) => {
                                         <select
                                             value={type}
                                             onChange={(e) => handleTypeChange(e, index)}
-                                            className="block w-full text-center bg-gray-700 focus:outline-none"
+                                            className="block w-full text-center bg-secondary focus:outline-none"
                                         >
                                             <option value="benefit">Benefit</option>
                                             <option value="cost">Cost</option>
@@ -405,8 +387,8 @@ const InputData = ({ onCalculate, method }) => {
                                     </td>
                                 ))}
                             </tr>
-                            <tr className="border-gray-800 bg-gray-700 divide-x divide-gray-600">
-                                <td className="px-7 py-3 whitespace-nowrap font-medium bg-gray-800 text-gray-400">
+                            <tr className="border-gray-800 bg-secondary divide-x divide-accent">
+                                <td className="px-7 py-3 whitespace-nowrap font-medium bg-primary text-accent">
                                     Weight
                                 </td>
                                 {weights.map((weight, index) => (
@@ -417,35 +399,35 @@ const InputData = ({ onCalculate, method }) => {
                                             value={weight}
                                             onChange={(e) => handleWeightChange(e, index)}
                                             onKeyDown={(e) => handleKeyDown(e, index)}
-                                            className="block w-full text-center focus:outline-none bg-gray-700"
+                                            className="block w-full text-center focus:outline-none bg-secondary"
                                         />
                                     </td>
                                 ))}
                             </tr>
                         </tbody>
                     </table>
-                    <table className="min-w-full text-sm text-gray-400 text-center divide-x divide-gray-600">
-                        <thead className="bg-gray-800 text-gray-400 uppercase tracking-wide text-xs">
+                    <table className="min-w-full text-sm text-accent text-center divide-y divide-accent">
+                        <thead className="bg-primary text-accent uppercase tracking-wide text-xs">
                             <tr>
-                                <th className="px-9 py-3 border-r border-gray-600" rowSpan="2">
+                                <th className="px-9 py-3 border-r border-accent" rowSpan="2">
                                     Item
                                 </th>
-                                <th className="px-9 py-3 border-b border-gray-600" colSpan={cols}>
+                                <th className="px-9 py-3 border-b border-accent" colSpan={cols}>
                                     Kriteria
                                 </th>
                             </tr>
                             <tr>
                                 {Array.from({ length: cols }, (_, index) => (
-                                    <th key={index} scope="col" className="px-9 py-3 border-l border-r border-gray-600">
+                                    <th key={index} scope="col" className="px-9 py-3 border-l">
                                         C{index + 1}
                                     </th>
                                 ))}
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-600">
+                        <tbody className="divide-y divide-accent">
                             {tableData.map((row, rowIndex) => (
-                                <tr key={rowIndex} className="border-gray-800 bg-gray-700 divide-x divide-gray-600">
-                                    <th scope="row" className="px-6 py-3 whitespace-nowrap font-medium text-gray-400">
+                                <tr key={rowIndex} className="border-accent bg-secondary divide-x divide-accent">
+                                    <th scope="row" className="px-6 py-3 whitespace-nowrap font-medium text-accent">
                                         A{rowIndex + 1}
                                     </th>
                                     {row.map((cell, colIndex) => (
@@ -457,7 +439,7 @@ const InputData = ({ onCalculate, method }) => {
                                                 onChange={(e) => handleInputChange(e, rowIndex, colIndex)}
                                                 onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
                                                 placeholder="0"
-                                                className="block text-center focus:outline-none bg-gray-700 w-full"
+                                                className="block text-center focus:outline-none bg-secondary w-full"
                                             />
                                         </td>
                                     ))}
@@ -472,13 +454,13 @@ const InputData = ({ onCalculate, method }) => {
             <div className="flex space-x-4">
                 <button
                     onClick={handleReset}
-                    className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                    className="bg-secondary hover:bg-primary text-accent font-bold py-2 px-4 rounded"
                 >
                     Reset
                 </button>
                 <button
                     onClick={handleCalculate}
-                    className="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded"
+                    className="bg-primary hover:bg-primaryHover text-accent font-bold py-2 px-4 rounded"
                 >
                     Calculate
                 </button>

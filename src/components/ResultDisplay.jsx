@@ -197,10 +197,10 @@ const ResultDisplay = ({ result }) => {
                 return (
                     <Table
                         headers={["Alternative", "Weight", "Rank"]}
-                        data={Object.entries(step.data).map(([alternative, data]) => [
+                        data={Object.entries(step.data).map(([alternative, item]) => [
                             alternative,
-                            data.weight.toFixed(4),
-                            data.rank
+                            item.weight.toFixed(4),
+                            item.rank
                         ])}
                     />
                 );
@@ -214,7 +214,7 @@ const ResultDisplay = ({ result }) => {
     };
 
     return (
-        <div className="w-full text-white">
+        <div className="w-full text-accent">
             {result.steps.filter(step => step.title !== "Input Data" && !/^Subcriteria Weights \d+$/.test(step.title)).map((step, index) => (
                 <div key={index} className="mb-6">
                     <h3 className="text-xl font-semibold mb-2">{step.title}</h3>

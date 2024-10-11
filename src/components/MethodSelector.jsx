@@ -11,14 +11,14 @@ const MethodSelector = ({ selectedMethod, onMethodChange }) => {
 
     return (
         <div className="mb-4">
-            <label htmlFor="method-select" className="block text-sm font-medium text-gray-200 mb-2">
+            <label htmlFor="method-select" className="block text-sm font-medium text-accent mb-2">
                 Select Method:
             </label>
             <select
                 id="method-select"
                 value={selectedMethod}
                 onChange={(e) => onMethodChange(e.target.value)}
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md bg-gray-700 text-white"
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-600 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md bg-secondary text-accent"
             >
                 {disabledOption}
                 {methods.map((method) => (
