@@ -81,7 +81,7 @@ const InputData = ({ onCalculate, method }) => {
         );
 
         if (existingComparisonBtoA) {
-            existingComparisonBtoA.value = 1 / value; 
+            existingComparisonBtoA.value = 1 / value;
         } else {
             newComparisons.push({
                 criterionA: criterionB,
@@ -97,7 +97,7 @@ const InputData = ({ onCalculate, method }) => {
         const comparison = pairwiseComparisons.find(
             comp => comp.criterionA === criterionA && comp.criterionB === criterionB
         );
-        return comparison ? comparison.value : "1"; 
+        return comparison ? comparison.value : "1";
     };
 
     const handleSubcriteriaPairwiseComparisonChange = (e, criterionIndex, subA, subB) => {
@@ -366,9 +366,9 @@ const InputData = ({ onCalculate, method }) => {
 
             {method !== "AHP" && (
                 <>
-
                     <table className="min-w-full text-sm text-accent text-center">
                         <tbody className="divide-y divide-accent">
+
 
                             <tr className="border-gray-800 bg-secondary divide-x divide-accent">
                                 <td className="px-7 py-3 whitespace-nowrap font-medium bg-primary text-accent">
