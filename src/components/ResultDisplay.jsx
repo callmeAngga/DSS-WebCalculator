@@ -111,6 +111,99 @@ const ResultDisplay = ({ result }) => {
                         ])}
                     />
                 );
+            case "Pairwise Comparison Matrix":
+            case "Normalized Pairwise Matrix":
+                const criteria = [...new Set(step.data.map(item => item.criterionA))];
+                return (
+                    <Table
+                        headers={["Criteria", ...criteria.map(c => `C${c}`)]} // Add prefix "C" to criteria
+                        data={criteria.map(rowCriterion => [
+                            `C${rowCriterion}`, // Add prefix "C" to rowCriterion
+                            ...criteria.map(colCriterion => {
+                                const cell = step.data.find(item => item.criterionA === rowCriterion && item.criterionB === colCriterion);
+                                return cell ? cell.value.toFixed(4) : "-";
+                            })
+                        ])}
+                    />
+                );
+
+            case "Criteria Weights":
+                return (
+                    <Table
+                        headers={["Criteria", "Weight"]} // Original headers remain the same
+                        data={Object.entries(step.data).map(([criterion, weight]) => [
+                            `C${criterion}`, // Add prefix "C" to criterion
+                            weight.toFixed(4)
+                        ])}
+                    />
+                );
+
+            case "Consistency Ratio":
+                return (
+                    <Table
+                        headers={["Measure", "Value"]}
+                        data={[
+                            ["LAMBDA MAX", step.data.lambdaMax.toFixed(4)],
+                            ["CONSISTENCY INDEX", step.data.consistencyIndex.toFixed(4)],
+                            ["CONSISTENCY RATIO", step.data.consistencyRatio.toFixed(4)]
+                        ]}
+                    />
+                );
+
+            case step.title.match(/^Normalized Subcriteria Pairwise Matrix \d+$/)?.input:
+                const subcriteria = [...new Set(step.data.map(item => item.criterionA))];
+
+                // Find the corresponding "Subcriteria Weights" step
+                const subcriteriaWeightsStep = result.steps.find(
+                    s => s.title === `Subcriteria Weights ${step.title.match(/\d+/)[0]}`
+                );
+                const subcriteriaWeights = subcriteriaWeightsStep ? subcriteriaWeightsStep.data : {};
+
+                // Calculate average weights for subcriteria
+                const averageWeights = subcriteria.map(rowCriterion => {
+                    return subcriteriaWeights[rowCriterion] ? subcriteriaWeights[rowCriterion].toFixed(4) : "0.0000";
+                });
+
+                return (
+                    <div>
+                        <Table
+                            headers={["Alternative", ...subcriteria.map(s => `A${s}`), "AVERAGE"]} // Add prefix "A" to subcriteria
+                            data={subcriteria.map((rowCriterion, rowIndex) => [
+                                `A${rowCriterion}`, // Add prefix "A" to rowCriterion
+                                ...subcriteria.map(colCriterion => {
+                                    const cell = step.data.find(item => item.criterionA === rowCriterion && item.criterionB === colCriterion);
+                                    return cell ? cell.value.toFixed(4) : "0.0000"; // Replace "-" with "0.0000"
+                                }),
+                                // Add the corresponding weight (average) from Subcriteria Weights
+                                averageWeights[rowIndex] // Fill in with actual average weight
+                            ])}
+                        />
+                    </div>
+                );
+
+
+            case "Final Subcriteria Weights":
+                return (
+                    <Table
+                        headers={["Alternative", "Weight"]}
+                        data={Object.entries(step.data).map(([subcriteria, weight]) => [
+                            subcriteria,
+                            weight.toFixed(4)
+                        ])}
+                    />
+                );
+
+            case "Final Ranking AHP":
+                return (
+                    <Table
+                        headers={["Alternative", "Weight", "Rank"]}
+                        data={Object.entries(step.data).map(([alternative, data]) => [
+                            alternative,
+                            data.weight.toFixed(4),
+                            data.rank
+                        ])}
+                    />
+                );
             default:
                 return (
                     <pre className="bg-gray-700 p-4 rounded-md overflow-x-auto">
@@ -122,7 +215,7 @@ const ResultDisplay = ({ result }) => {
 
     return (
         <div className="w-full text-white">
-            {result.steps.filter(step => step.title !== "Input Data").map((step, index) => (
+            {result.steps.filter(step => step.title !== "Input Data" && !/^Subcriteria Weights \d+$/.test(step.title)).map((step, index) => (
                 <div key={index} className="mb-6">
                     <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
                     {renderStepContent(step)}
