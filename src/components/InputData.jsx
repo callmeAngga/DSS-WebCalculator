@@ -7,7 +7,6 @@ const InputData = ({ onCalculate, method }) => {
     const [weights, setWeights] = useState([]);
     const [types, setTypes] = useState([]);
     const [pairwiseComparisons, setPairwiseComparisons] = useState([]);
-    // const [subcriteriaCount, setSubcriteriaCount] = useState(Array(cols));
     const [subcriteriaPairwiseComparisons, setSubcriteriaPairwiseComparisons] = useState(Array(cols).fill([])
     );
     const inputRefs = useRef([]);
@@ -27,7 +26,6 @@ const InputData = ({ onCalculate, method }) => {
         setWeights(Array(cols).fill(0));
         setTypes(Array(cols).fill('benefit'));
         setPairwiseComparisons([]);
-        // setSubcriteriaCount(Array(cols));
         setSubcriteriaPairwiseComparisons(Array.from({ length: cols }, () => Array.from({ length: rows }, () => Array(rows).fill(1))));
     };
 
@@ -61,12 +59,8 @@ const InputData = ({ onCalculate, method }) => {
             const [numerator, denominator] = value.split('/');
             value = Number(numerator) / Number(denominator);
         } else {
-            value = Number(value); // If not a fraction, convert directly to number
+            value = Number(value);
         }
-
-        // Create unique keys for comparisons
-        // const keyAtoB = `${criterionA}-${criterionB}`;
-        // const keyBtoA = `${criterionB}-${criterionA}`;
 
         // Update or add the comparison for criterionA < criterionB
         const existingComparisonAtoB = newComparisons.find(
@@ -138,10 +132,6 @@ const InputData = ({ onCalculate, method }) => {
     /*================================================================================ */
 
     const handleCalculate = () => {
-        // if (method != "AHP" && tableData.some(row => row.some(cell => cell === 0)) || weights.some(w => w === 0)) {
-        //     alert('Please fill all input fields before calculating.');
-        //     return;
-        // }
         if (!method) {
             alert('Please select a method before calculating.');
             return;
@@ -384,7 +374,6 @@ const InputData = ({ onCalculate, method }) => {
 
             {method !== "AHP" && (
                 <>
-
                     <table className="min-w-full text-sm text-gray-400 text-center">
                         <tbody className="divide-y divide-gray-600">
 
