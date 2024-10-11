@@ -29,7 +29,6 @@ const DSSCalculator = ({ onCalculationResult }) => {
                 calculationResult = calculateTOPSIS(inputData);
                 break;
             case "AHP":
-                // alert("COMING SOON");
                 calculationResult = calculateAHP(inputData);
                 break;
             default:

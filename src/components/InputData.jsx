@@ -6,12 +6,10 @@ const InputData = ({ onCalculate, method }) => {
     const [tableData, setTableData] = useState([]);
     const [weights, setWeights] = useState([]);
     const [types, setTypes] = useState([]);
-    /*============================================================================================== */
     const [pairwiseComparisons, setPairwiseComparisons] = useState([]);
-    const [subcriteriaCount, setSubcriteriaCount] = useState(Array(cols)); // New state to track subcriteria count per criterion
-    const [subcriteriaPairwiseComparisons, setSubcriteriaPairwiseComparisons] = useState(Array(cols).fill([]) // Inisialisasi array kosong untuk setiap kriteria
+    // const [subcriteriaCount, setSubcriteriaCount] = useState(Array(cols));
+    const [subcriteriaPairwiseComparisons, setSubcriteriaPairwiseComparisons] = useState(Array(cols).fill([])
     );
-    /*============================================================================================== */
     const inputRefs = useRef([]);
 
     const incrementRows = () => setRows(rows + 1);
@@ -28,12 +26,9 @@ const InputData = ({ onCalculate, method }) => {
         setTableData(newTableData);
         setWeights(Array(cols).fill(0));
         setTypes(Array(cols).fill('benefit'));
-        /*================================================================================= */
         setPairwiseComparisons([]);
-        setSubcriteriaCount(Array(cols)); // Reset subcriteria count when criteria count changes
-        // setSubcriteriaPairwiseComparisons([]);
+        // setSubcriteriaCount(Array(cols));
         setSubcriteriaPairwiseComparisons(Array.from({ length: cols }, () => Array.from({ length: rows }, () => Array(rows).fill(1))));
-        /*================================================================================= */
     };
 
     const handleInputChange = (e, rowIndex, colIndex) => {
@@ -58,46 +53,26 @@ const InputData = ({ onCalculate, method }) => {
         generateTable();
     };
 
-    /*================================================================================ */
-    // const handleSubcriteriaCountChange = (e, criterionIndex) => {
-    //     const newSubcriteriaCount = [...subcriteriaCount];
-    //     const newCount = Number(e.target.value);
-    //     newSubcriteriaCount[criterionIndex] = newCount;
-    //     setSubcriteriaCount(newSubcriteriaCount);
-
-    //     // Inisialisasi atau reset pairwise comparisons untuk subkriteria yang diubah
-    //     const newComparisons = [...subcriteriaPairwiseComparisons];
-
-    //     // Buat matriks baru dengan nilai 1 untuk diagonal, dan null untuk yang lain
-    //     const pairwiseMatrix = Array.from({ length: newCount }, (_, i) =>
-    //         Array.from({ length: newCount }, (_, j) => (i === j ? 1 : null))
-    //     );
-
-    //     // Update perbandingan subkriteria untuk kriteria tertentu
-    //     newComparisons[criterionIndex] = pairwiseMatrix;
-    //     setSubcriteriaPairwiseComparisons(newComparisons);
-    // };
-
     const handlePairwiseComparisonChange = (e, criterionA, criterionB) => {
         const newComparisons = [...pairwiseComparisons];
         let value = e.target.value;
-    
+
         if (value.includes('/')) {
             const [numerator, denominator] = value.split('/');
             value = Number(numerator) / Number(denominator);
         } else {
             value = Number(value); // If not a fraction, convert directly to number
         }
-    
+
         // Create unique keys for comparisons
-        const keyAtoB = `${criterionA}-${criterionB}`;
-        const keyBtoA = `${criterionB}-${criterionA}`;
-    
+        // const keyAtoB = `${criterionA}-${criterionB}`;
+        // const keyBtoA = `${criterionB}-${criterionA}`;
+
         // Update or add the comparison for criterionA < criterionB
         const existingComparisonAtoB = newComparisons.find(
             comp => comp.criterionA === criterionA && comp.criterionB === criterionB
         );
-    
+
         if (existingComparisonAtoB) {
             existingComparisonAtoB.value = value;
         } else {
@@ -107,12 +82,12 @@ const InputData = ({ onCalculate, method }) => {
                 value,
             });
         }
-    
+
         // Update or add the reverse comparison (criterionB < criterionA)
         const existingComparisonBtoA = newComparisons.find(
             comp => comp.criterionA === criterionB && comp.criterionB === criterionA
         );
-    
+
         if (existingComparisonBtoA) {
             existingComparisonBtoA.value = 1 / value; // Always update the reverse comparison
         } else {
@@ -122,7 +97,7 @@ const InputData = ({ onCalculate, method }) => {
                 value: 1 / value, // Always store the reverse comparison
             });
         }
-    
+
         // Save changes to state
         setPairwiseComparisons(newComparisons);
     };
@@ -227,7 +202,7 @@ const InputData = ({ onCalculate, method }) => {
         <div className="space-y-4 flex flex-col">
             <table className="max-w-20">
                 <tr>
-                    <td className="text-left pr-2">Rows</td>
+                    <td className="text-left pr-2">{method === 'AHP' ? 'Alternatives' : 'Rows'}</td>
                     <td className="pr-2">:</td>
                     <td className="flex items-center space-x-4">
                         <button
@@ -248,7 +223,7 @@ const InputData = ({ onCalculate, method }) => {
                     </td>
                 </tr>
                 <tr>
-                    <td className="text-left pr-2">Columns</td>
+                    <td className="text-left pr-2">{method === 'AHP' ? 'Criteria' : 'Columns'}</td>
                     <td className="pr-2">:</td>
                     <td className="flex items-center space-x-4">
                         <button
@@ -301,24 +276,24 @@ const InputData = ({ onCalculate, method }) => {
                                                     onChange={(e) => handlePairwiseComparisonChange(e, criterionA, criterionB)}
                                                     className="block w-full text-center bg-gray-700 focus:outline-none"
                                                 >
-                                                    <option value="1/9">Extremely More Unimportant</option>
+                                                    <option value="-" selected disabled>Choose</option>
+                                                    <option value="1/9">1/9</option>
                                                     <option value="1/8">1/8</option>
-                                                    <option value="1/7">Very Strongly More Unimportant</option>
+                                                    <option value="1/7">1/7</option>
                                                     <option value="1/6">1/6</option>
-                                                    <option value="1/5">Strongly More Unimportant</option>
+                                                    <option value="1/5">1/5</option>
                                                     <option value="1/4">1/4</option>
-                                                    <option value="1/3">Moderately More Unimportant</option>
-                                                    <option value="1/2" >1/2</option>
-                                                    <option value="1">Equal Importance</option>
-                                                    <option value="2" >2</option>
-                                                    <option value="3">Moderately More Important</option>
+                                                    <option value="1/3">1/3</option>
+                                                    <option value="1/2">1/2</option>
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
                                                     <option value="4">4</option>
-                                                    <option value="5">Strongly More Important</option>
+                                                    <option value="5">5</option>
                                                     <option value="6">6</option>
-                                                    <option value="7">Very Strongly More Important</option>
+                                                    <option value="7">7</option>
                                                     <option value="8">8</option>
-                                                    <option value="9">Extremely More Important</option>
-                                                    <option value="-" selected>Choose</option>
+                                                    <option value="9">9</option>
                                                 </select>
                                             ) : criterionA === criterionB ? (
                                                 <span className="text-gray-500" value="1">1</span>
@@ -335,36 +310,13 @@ const InputData = ({ onCalculate, method }) => {
                     </table>
                     <br />
 
-                    <table className="min-w-full text-sm text-gray-400 text-center divide-x divide-gray-600">
-                        <thead className="bg-gray-800 text-gray-400 uppercase tracking-wide text-xs">
-                            <tr>
-                                {Array.from({ length: cols }, (_, criterionIndex) => (
-                                    <th key={criterionIndex} scope="col" className="px-9 py-3 border-l border-r border-gray-600">
-                                        C{criterionIndex + 1} Subcriteria Count
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-600">
-                            <tr className="border-gray-800 bg-gray-700 divide-x divide-gray-600">
-                                {Array.from({ length: cols }, (_, criterionIndex) => (
-                                    <td key={criterionIndex} className="px-6 py-3">
-                                        <span className="block w-full text-center bg-gray-700">
-                                            {rows}
-                                        </span>
-                                    </td>
-                                ))}
-                            </tr>
-                        </tbody>
-                    </table>
-                    <br />
                     {Array.from({ length: cols }, (_, criterionIndex) => (
                         <div key={criterionIndex}>
                             <h3 className="text-lg font-bold text-gray-300 mb-2">Subcriteria C{criterionIndex + 1}</h3>
                             <table className="min-w-full text-sm text-gray-400 text-center divide-x divide-gray-600 mb-6">
                                 <thead className="bg-gray-800 text-gray-400 uppercase tracking-wide text-xs">
                                     <tr>
-                                        <th className="px-7 py-3 border-r border-gray-600" rowSpan="2">Subcriteria</th>
+                                        <th className="px-7 py-3 border-r border-gray-600" rowSpan="2">Alternative</th>
                                         <th className="px-7 py-3 border-b border-gray-600" colSpan={rows}>
                                             More Important Comparison
                                         </th>
@@ -372,7 +324,7 @@ const InputData = ({ onCalculate, method }) => {
                                     <tr>
                                         {Array.from({ length: rows }, (_, subIndex) => (
                                             <th key={subIndex} className="px-9 py-3 border-l border-r border-gray-600">
-                                                Compare to SC{subIndex + 1}
+                                                Compare to A{subIndex + 1}
                                             </th>
                                         ))}
                                     </tr>
@@ -381,7 +333,7 @@ const InputData = ({ onCalculate, method }) => {
                                     {Array.from({ length: rows }, (_, subA) => (
                                         <tr key={subA} className="border-gray-800 bg-gray-700 divide-x divide-gray-600">
                                             <td className="px-7 py-3 whitespace-nowrap font-medium bg-gray-700 text-gray-400">
-                                                SC{subA + 1}
+                                                A{subA + 1}
                                             </td>
                                             {Array.from({ length: rows }, (_, subB) => (
                                                 <td key={`${subA}-${subB}-${criterionIndex}`} className="px-6 py-3">
@@ -407,7 +359,7 @@ const InputData = ({ onCalculate, method }) => {
                                                             <option value="7">7</option>
                                                             <option value="8">8</option>
                                                             <option value="9">9</option>
-                                                            <option value="-"selected>Choose</option>
+                                                            <option value="-" selected>Choose</option>
                                                         </select>
                                                     ) : subA === subB ? (
                                                         <span className="text-gray-500">1</span>
@@ -430,90 +382,92 @@ const InputData = ({ onCalculate, method }) => {
                 </div>
             )}
 
-            {/* /*================================= */}
-
             {method !== "AHP" && (
-                <table className="min-w-full text-sm text-gray-400 text-center">
-                    <tbody className="divide-y divide-gray-600">
+                <>
 
-                        <tr className="border-gray-800 bg-gray-700 divide-x divide-gray-600">
-                            <td className="px-7 py-3 whitespace-nowrap font-medium bg-gray-800 text-gray-400">
-                                Type
-                            </td>
-                            {types.map((type, index) => (
-                                <td key={index} className="px-6 py-3">
-                                    <select
-                                        value={type}
-                                        onChange={(e) => handleTypeChange(e, index)}
-                                        className="block w-full text-center bg-gray-700 focus:outline-none"
-                                    >
-                                        <option value="benefit">Benefit</option>
-                                        <option value="cost">Cost</option>
-                                    </select>
+                    <table className="min-w-full text-sm text-gray-400 text-center">
+                        <tbody className="divide-y divide-gray-600">
+
+                            <tr className="border-gray-800 bg-gray-700 divide-x divide-gray-600">
+                                <td className="px-7 py-3 whitespace-nowrap font-medium bg-gray-800 text-gray-400">
+                                    Type
                                 </td>
-                            ))}
-                        </tr>
-                        <tr className="border-gray-800 bg-gray-700 divide-x divide-gray-600">
-                            <td className="px-7 py-3 whitespace-nowrap font-medium bg-gray-800 text-gray-400">
-                                Weight
-                            </td>
-                            {weights.map((weight, index) => (
-                                <td key={index} className="px-6 py-3">
-                                    <input
-                                        ref={(el) => (inputRefs.current[index] = el)}
-                                        type="text"
-                                        value={weight}
-                                        onChange={(e) => handleWeightChange(e, index)}
-                                        onKeyDown={(e) => handleKeyDown(e, index)}
-                                        className="block w-full text-center focus:outline-none bg-gray-700"
-                                    />
+                                {types.map((type, index) => (
+                                    <td key={index} className="px-6 py-3">
+                                        <select
+                                            value={type}
+                                            onChange={(e) => handleTypeChange(e, index)}
+                                            className="block w-full text-center bg-gray-700 focus:outline-none"
+                                        >
+                                            <option value="benefit">Benefit</option>
+                                            <option value="cost">Cost</option>
+                                        </select>
+                                    </td>
+                                ))}
+                            </tr>
+                            <tr className="border-gray-800 bg-gray-700 divide-x divide-gray-600">
+                                <td className="px-7 py-3 whitespace-nowrap font-medium bg-gray-800 text-gray-400">
+                                    Weight
                                 </td>
+                                {weights.map((weight, index) => (
+                                    <td key={index} className="px-6 py-3">
+                                        <input
+                                            ref={(el) => (inputRefs.current[index] = el)}
+                                            type="text"
+                                            value={weight}
+                                            onChange={(e) => handleWeightChange(e, index)}
+                                            onKeyDown={(e) => handleKeyDown(e, index)}
+                                            className="block w-full text-center focus:outline-none bg-gray-700"
+                                        />
+                                    </td>
+                                ))}
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table className="min-w-full text-sm text-gray-400 text-center divide-x divide-gray-600">
+                        <thead className="bg-gray-800 text-gray-400 uppercase tracking-wide text-xs">
+                            <tr>
+                                <th className="px-9 py-3 border-r border-gray-600" rowSpan="2">
+                                    Item
+                                </th>
+                                <th className="px-9 py-3 border-b border-gray-600" colSpan={cols}>
+                                    Kriteria
+                                </th>
+                            </tr>
+                            <tr>
+                                {Array.from({ length: cols }, (_, index) => (
+                                    <th key={index} scope="col" className="px-9 py-3 border-l border-r border-gray-600">
+                                        C{index + 1}
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-600">
+                            {tableData.map((row, rowIndex) => (
+                                <tr key={rowIndex} className="border-gray-800 bg-gray-700 divide-x divide-gray-600">
+                                    <th scope="row" className="px-6 py-3 whitespace-nowrap font-medium text-gray-400">
+                                        A{rowIndex + 1}
+                                    </th>
+                                    {row.map((cell, colIndex) => (
+                                        <td key={colIndex} className="px-6 py-3">
+                                            <input
+                                                ref={(el) => (inputRefs.current[rowIndex * cols + colIndex] = el)}
+                                                type="text"
+                                                value={cell}
+                                                onChange={(e) => handleInputChange(e, rowIndex, colIndex)}
+                                                onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
+                                                placeholder="0"
+                                                className="block text-center focus:outline-none bg-gray-700 w-full"
+                                            />
+                                        </td>
+                                    ))}
+                                </tr>
                             ))}
-                        </tr>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </>
             )}
-            <table className="min-w-full text-sm text-gray-400 text-center divide-x divide-gray-600">
-                <thead className="bg-gray-800 text-gray-400 uppercase tracking-wide text-xs">
-                    <tr>
-                        <th className="px-9 py-3 border-r border-gray-600" rowSpan="2">
-                            Item
-                        </th>
-                        <th className="px-9 py-3 border-b border-gray-600" colSpan={cols}>
-                            Kriteria
-                        </th>
-                    </tr>
-                    <tr>
-                        {Array.from({ length: cols }, (_, index) => (
-                            <th key={index} scope="col" className="px-9 py-3 border-l border-r border-gray-600">
-                                C{index + 1}
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-600">
-                    {tableData.map((row, rowIndex) => (
-                        <tr key={rowIndex} className="border-gray-800 bg-gray-700 divide-x divide-gray-600">
-                            <th scope="row" className="px-6 py-3 whitespace-nowrap font-medium text-gray-400">
-                                A{rowIndex + 1}
-                            </th>
-                            {row.map((cell, colIndex) => (
-                                <td key={colIndex} className="px-6 py-3">
-                                    <input
-                                        ref={(el) => (inputRefs.current[rowIndex * cols + colIndex] = el)}
-                                        type="text"
-                                        value={cell}
-                                        onChange={(e) => handleInputChange(e, rowIndex, colIndex)}
-                                        onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
-                                        placeholder="0"
-                                        className="block text-center focus:outline-none bg-gray-700 w-full"
-                                    />
-                                </td>
-                            ))}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+
 
             <div className="flex space-x-4">
                 <button

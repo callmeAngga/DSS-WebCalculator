@@ -1,28 +1,21 @@
 export function calculateAHP(input) {
     const { rows, cols, values, pairWise, subcriteriaPairWise } = input;
-    const methode = "AHP";
 
     const steps = [
         {
             title: "Input Data",
-            data: { rows, cols, values, pairWise, subcriteriaPairWise, methode },
+            data: { rows, cols, values, pairWise, subcriteriaPairWise },
         },
     ];
-    const mtd = methode
-    steps.push({
-        title: "method",
-        data: mtd
-    });
 
     // Step 2: Pairwise Comparison Matrix for main criteria
-    const pairwiseMatrix = pairWise;
+    const pairwiseMatrix = ensureCompletePairwiseMatrix(pairWise);
     steps.push({
         title: "Pairwise Comparison Matrix",
         data: pairwiseMatrix,
     });
 
     // Step 3: Normalize Pairwise Matrix for main criteria
-    // const normalizedMatrixFirst = convertToMatrix(pairwiseMatrix)
     const normalizedPairwiseMatrix = normalizeMatrixAHP(pairwiseMatrix);
     steps.push({
         title: "Normalized Pairwise Matrix",
@@ -74,49 +67,6 @@ export function calculateAHP(input) {
         data: FinalWeights,
     });
 
-    // Step 6: Process Subcriteria Pairwise Matrices for each criterion
-    // const subcriteriaResults = subcriteriaPairWise.map((subPairWise, index) => {
-    //     // Normalize each subcriteria pairwise matrix
-    //     const normalizedSubPairWise = normalizeMatrixAHP(subPairWise);
-
-    //     // Calculate weights for each subcriteria
-    //     const subcriteriaWeights = calculateWeights(normalizedSubPairWise);
-
-    //     return {
-    //         criterion: `Criterion ${index + 1}`,
-    //         normalizedMatrix: normalizedSubPairWise,
-    //         subcriteriaWeights: subcriteriaWeights,
-    //     };
-    // });
-
-    // // Add subcriteria results to steps
-    // subcriteriaResults.forEach(result => {
-    //     steps.push({
-    //         title: `Subcriteria for ${result.criterion}`,
-    //         data: {
-    //             normalizedMatrix: result.normalizedMatrix,
-    //             weights: result.subcriteriaWeights,
-    //         },
-    //     });
-    // });
-
-    // // Step 7: Create a new matrix from subcriteria weights (alternatives evaluation)
-    // const subcriteriaWeightMatrix = subcriteriaResults[0].subcriteriaWeights.map((_, i) =>
-    //     subcriteriaResults.map(sub => sub.subcriteriaWeights[i])
-    // );
-
-    // steps.push({
-    //     title: "Subcriteria Weights Matrix",
-    //     data: subcriteriaWeightMatrix,
-    // });
-
-    // // Step 8: Multiply subcriteria matrix by criteria weights to get final scores
-    // const finalScores = multiplyMatrixByVector(subcriteriaWeightMatrix, criteriaWeights);
-
-    // steps.push({
-    //     title: "Final Scores",
-    //     data: finalScores,
-    // });
 
     // Step 9: Rank the final scores
     const ranking = rankAlternatives(FinalWeights);
@@ -131,6 +81,45 @@ export function calculateAHP(input) {
         result: ranking,
     };
 
+}
+
+function ensureCompletePairwiseMatrix(pairWise) {
+    const criteria = new Set();
+    pairWise.forEach(item => {
+        criteria.add(item.criterionA);
+        criteria.add(item.criterionB);
+    });
+
+    const completeMatrix = [];
+    criteria.forEach(i => {
+        criteria.forEach(j => {
+            if (i === j) {
+                completeMatrix.push({ criterionA: i, criterionB: j, value: 1 });
+            } else {
+                const existingComparison = pairWise.find(
+                    item => item.criterionA === i && item.criterionB === j
+                );
+                if (existingComparison) {
+                    completeMatrix.push(existingComparison);
+                } else {
+                    const reverseComparison = pairWise.find(
+                        item => item.criterionA === j && item.criterionB === i
+                    );
+                    if (reverseComparison) {
+                        completeMatrix.push({
+                            criterionA: i,
+                            criterionB: j,
+                            value: 1 / reverseComparison.value
+                        });
+                    } else {
+                        console.warn(`Missing comparison for criteria ${i} and ${j}`);
+                    }
+                }
+            }
+        });
+    });
+
+    return completeMatrix;
 }
 
 function rankAlternatives(aggregatedWeights) {
@@ -183,7 +172,7 @@ function calculateAggregateSubcriteriaWeights(criteriaWeights, subcriteriaWeight
             const aggregateWeight = criterionWeight * subWeights[subKey];
 
             // Save the aggregate weight in the result object
-            aggregateWeights[`C${index + 1}_S${subKey}`] = aggregateWeight;
+            aggregateWeights[`C${index + 1}_A${subKey}`] = aggregateWeight;
         });
     });
 
