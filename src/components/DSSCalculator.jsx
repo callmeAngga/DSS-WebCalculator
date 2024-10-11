@@ -4,6 +4,7 @@ import InputData from "./InputData";
 import { calculateWP } from "../utils/wpMethod";
 import { calculateSAW } from "../utils/sawMethod";
 import { calculateTOPSIS } from "../utils/topsisMethod";
+import { calculateAHP } from "../utils/ahpMethod";
 
 const DSSCalculator = ({ onCalculationResult }) => {
     const [method, setMethod] = useState("");
@@ -28,8 +29,8 @@ const DSSCalculator = ({ onCalculationResult }) => {
                 calculationResult = calculateTOPSIS(inputData);
                 break;
             case "AHP":
-                alert("COMING SOON");
-                // calculationResult = calculateAHP(inputData);
+                // alert("COMING SOON");
+                calculationResult = calculateAHP(inputData);
                 break;
             default:
                 calculationResult = "Invalid method";
