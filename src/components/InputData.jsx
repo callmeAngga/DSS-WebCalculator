@@ -226,7 +226,6 @@ const InputData = ({ onCalculate, method }) => {
                     </td>
                 </tr>
             </table>
-            {/* /*======================================= */}
             {method === "AHP" && (
                 <div>
                     <table className="min-w-full text-sm text-accent text-center divide-y divide-accent">

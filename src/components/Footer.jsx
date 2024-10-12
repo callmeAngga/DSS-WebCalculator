@@ -1,6 +1,8 @@
 import React from 'react';
 import { Github, Linkedin, Instagram } from 'lucide-react';
 import anggaImage from '../assets/images/angga.png'
+import giastImage from '../assets/images/giast.jpg'
+import devalcoImage from '../assets/images/devalco.jpg'
 
 const DeveloperCard = ({ name, role, imageUrl }) => (
     <div className="flex flex-col items-center p-4">
@@ -30,7 +32,7 @@ const Footer = () => {
         {
             name: "Giast Ahmad",
             role: "Frontend Developer",
-            imageUrl: anggaImage
+            imageUrl: giastImage
         },
         {
             name: "Angga Prasetyo",
@@ -40,7 +42,7 @@ const Footer = () => {
         {
             name: "Devalco Agazan",
             role: "UI/UX Designer",
-            imageUrl: anggaImage
+            imageUrl: devalcoImage
         }
     ];
 

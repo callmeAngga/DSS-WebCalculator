@@ -64,11 +64,13 @@ export function calculateTOPSIS(input) {
     };
 }
 
+// Normalisasi bobot untuk membuat total bobot = 1.
 function normalizeWeights(weights) {
     const sum = weights.reduce((a, b) => a + b, 0);
     return weights.map((w) => w / sum);
 }
 
+// Normalisasi matriks keputusan menggunakan metode Euclidean (akar kuadrat dari jumlah kuadrat nilai setiap kriteria).
 function normalizeDecisionMatrix(values) {
     return values.map((row) => {
         const sqrtSum = Math.sqrt(row.reduce((sum, val) => sum + val * val, 0));
@@ -76,28 +78,31 @@ function normalizeDecisionMatrix(values) {
     });
 }
 
+// Mengalikan setiap elemen dari matriks yang telah dinormalisasi dengan bobot kriteria yang sesuai.
 function calculateWeightedMatrix(normalizedMatrix, weights) {
     return normalizedMatrix.map((row) =>
         row.map((val, j) => val * weights[j])
     );
 }
 
+// Menentukan solusi ideal (maksimum untuk 'benefit', minimum untuk 'cost') dan solusi negatif-ideal (minimum untuk 'benefit', maksimum untuk 'cost').
 function calculateIdealSolutions(weightedMatrix, types) {
     const ideal = weightedMatrix[0].map((_, j) =>
         types[j] === "benefit"
-            ? Math.max(...weightedMatrix.map((r) => r[j]))
-            : Math.min(...weightedMatrix.map((r) => r[j]))
+            ? Math.max(...weightedMatrix.map((r) => r[j]))  // Untuk kriteria benefit, cari nilai maksimum
+            : Math.min(...weightedMatrix.map((r) => r[j]))  // Untuk kriteria cost, cari nilai minimum
     );
 
     const negativeIdeal = weightedMatrix[0].map((_, j) =>
         types[j] === "benefit"
-            ? Math.min(...weightedMatrix.map((r) => r[j]))
-            : Math.max(...weightedMatrix.map((r) => r[j]))
+            ? Math.min(...weightedMatrix.map((r) => r[j]))  // Untuk kriteria benefit, cari nilai minimum
+            : Math.max(...weightedMatrix.map((r) => r[j]))   // Untuk kriteria cost, cari nilai maksimum
     );
 
     return { ideal, negativeIdeal };
 }
 
+// Menghitung ukuran pemisahan, yaitu jarak antara setiap alternatif ke solusi ideal (dPlus) dan solusi negatif-ideal (dMinus).
 function calculateSeparationMeasures(weightedMatrix, ideal, negativeIdeal) {
     return weightedMatrix.map((row) => {
         const dPlus = Math.sqrt(
@@ -110,12 +115,14 @@ function calculateSeparationMeasures(weightedMatrix, ideal, negativeIdeal) {
     });
 }
 
+// Menghitung closeness coefficient (kedekatan relatif), yaitu seberapa dekat alternatif ke solusi ideal.
 function calculateRelativeCloseness(separation) {
     return separation.map(
         ({ dPlus, dMinus }) => dMinus / (dPlus + dMinus)
     );
 }
 
+// Memberi peringkat alternatif berdasarkan closeness coefficient, semakin besar nilai semakin tinggi peringkat.
 function rankAlternatives(relativeCloseness) {
     return relativeCloseness
         .map((v, i) => ({ index: i + 1, value: v }))

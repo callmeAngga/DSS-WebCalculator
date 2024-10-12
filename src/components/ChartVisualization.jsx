@@ -19,11 +19,9 @@ const ChartVisualization = ({ result }) => {
     }
 
     if (Array.isArray(finalRankingStep.data)) {
-        // For non-AHP methods
         labels = finalRankingStep.data.map(item => `A${item.index}`);
         values = finalRankingStep.data.map(item => item.value);
     } else if (typeof finalRankingStep.data === 'object') {
-        // For AHP method
         labels = Object.keys(finalRankingStep.data);
         values = Object.values(finalRankingStep.data).map(item => item.weight);
     } else {

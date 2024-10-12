@@ -15,7 +15,7 @@ export default function App() {
 
     return (
         <div className="min-h-screen bg-tertiary text-accent">
-
+            {/* Section Header Start */}
             <section className='object-contain w-full bg-primary'>
                 <div className='container mx-auto'>
                     <div className='w-full h-36 flex items-center justify-center'>
@@ -23,6 +23,7 @@ export default function App() {
                     </div>
                 </div>
             </section>
+            {/* Section Header End */}
 
             {/* Section Input Start */}
             <section className='object-contain w-full'>

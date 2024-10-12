@@ -116,9 +116,9 @@ const ResultDisplay = ({ result }) => {
                 const criteria = [...new Set(step.data.map(item => item.criterionA))];
                 return (
                     <Table
-                        headers={["Criteria", ...criteria.map(c => `C${c}`)]} // Add prefix "C" to criteria
+                        headers={["Criteria", ...criteria.map(c => `C${c}`)]} 
                         data={criteria.map(rowCriterion => [
-                            `C${rowCriterion}`, // Add prefix "C" to rowCriterion
+                            `C${rowCriterion}`,
                             ...criteria.map(colCriterion => {
                                 const cell = step.data.find(item => item.criterionA === rowCriterion && item.criterionB === colCriterion);
                                 return cell ? cell.value.toFixed(4) : "-";
@@ -130,9 +130,9 @@ const ResultDisplay = ({ result }) => {
             case "Criteria Weights":
                 return (
                     <Table
-                        headers={["Criteria", "Weight"]} // Original headers remain the same
+                        headers={["Criteria", "Weight"]} 
                         data={Object.entries(step.data).map(([criterion, weight]) => [
-                            `C${criterion}`, // Add prefix "C" to criterion
+                            `C${criterion}`, 
                             weight.toFixed(4)
                         ])}
                     />
@@ -153,13 +153,11 @@ const ResultDisplay = ({ result }) => {
             case step.title.match(/^Normalized Subcriteria Pairwise Matrix \d+$/)?.input:
                 const subcriteria = [...new Set(step.data.map(item => item.criterionA))];
 
-                // Find the corresponding "Subcriteria Weights" step
                 const subcriteriaWeightsStep = result.steps.find(
                     s => s.title === `Subcriteria Weights ${step.title.match(/\d+/)[0]}`
                 );
                 const subcriteriaWeights = subcriteriaWeightsStep ? subcriteriaWeightsStep.data : {};
 
-                // Calculate average weights for subcriteria
                 const averageWeights = subcriteria.map(rowCriterion => {
                     return subcriteriaWeights[rowCriterion] ? subcriteriaWeights[rowCriterion].toFixed(4) : "0.0000";
                 });
@@ -167,15 +165,14 @@ const ResultDisplay = ({ result }) => {
                 return (
                     <div>
                         <Table
-                            headers={["Alternative", ...subcriteria.map(s => `A${s}`), "AVERAGE"]} // Add prefix "A" to subcriteria
+                            headers={["Alternative", ...subcriteria.map(s => `A${s}`), "AVERAGE"]} 
                             data={subcriteria.map((rowCriterion, rowIndex) => [
-                                `A${rowCriterion}`, // Add prefix "A" to rowCriterion
+                                `A${rowCriterion}`, 
                                 ...subcriteria.map(colCriterion => {
                                     const cell = step.data.find(item => item.criterionA === rowCriterion && item.criterionB === colCriterion);
-                                    return cell ? cell.value.toFixed(4) : "0.0000"; // Replace "-" with "0.0000"
+                                    return cell ? cell.value.toFixed(4) : "0.0000";
                                 }),
-                                // Add the corresponding weight (average) from Subcriteria Weights
-                                averageWeights[rowIndex] // Fill in with actual average weight
+                                averageWeights[rowIndex] 
                             ])}
                         />
                     </div>

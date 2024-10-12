@@ -43,11 +43,13 @@ export function calculateSAW(input) {
     };
 }
 
+// Normalisasi bobot untuk membuat total bobot = 1.
 function normalizeWeights(weights) {
     const sum = weights.reduce((a, b) => a + b, 0);
     return weights.map((w) => w / sum);
 }
 
+// Normalisasi matriks nilai alternatif berdasarkan tipe kriteria 'benefit' atau 'cost'.
 function normalizeMatrix(values, types) {
     return values.map(row =>
         row.map((val, j) => {
@@ -58,12 +60,14 @@ function normalizeMatrix(values, types) {
     );
 }
 
+// Menghitung jumlah bobot untuk setiap alternatif.
 function calculateWeightedSum(normalizedMatrix, weights) {
     return normalizedMatrix.map(row =>
         row.reduce((sum, val, j) => sum + val * weights[j], 0)
     );
 }
 
+// Memberi peringkat alternatif berdasarkan hasil 'weighted sum'.
 function rankAlternatives(weightedSum) {
     return weightedSum
         .map((v, i) => ({ index: i + 1, value: v }))

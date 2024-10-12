@@ -1,6 +1,7 @@
 export function calculateAHP(input) {
     const { rows, cols, values, pairWise, subcriteriaPairWise } = input;
 
+    // Step 1: Input Data
     const steps = [
         {
             title: "Input Data",
@@ -8,48 +9,45 @@ export function calculateAHP(input) {
         },
     ];
 
-    // Step 2: Pairwise Comparison Matrix for main criteria
+    // Step 2: Pairwise Comparison Matrix untuk kriteria utama
     const pairwiseMatrix = ensureCompletePairwiseMatrix(pairWise);
     steps.push({
         title: "Pairwise Comparison Matrix",
         data: pairwiseMatrix,
     });
 
-    // Step 3: Normalize Pairwise Matrix for main criteria
+    // Step 3: Normalisasi Pairwise Matrix
     const normalizedPairwiseMatrix = normalizeMatrixAHP(pairwiseMatrix);
     steps.push({
         title: "Normalized Pairwise Matrix",
         data: normalizedPairwiseMatrix,
     });
 
-    // Step 4: Calculate Criteria Weights (Eigenvector)
+    // Step 4: Hitung bobot kriteria (Eigenvector)
     const criteriaWeights = calculateWeights(normalizedPairwiseMatrix);
     steps.push({
         title: "Criteria Weights",
         data: criteriaWeights,
     });
 
-    // Step 5: Calculate Consistency Ratio for main criteria
+    // Step 5: Hitung Consistency Ratio untuk kriteria utama
     const consistencyRatio = calculateConsistencyRatio(pairwiseMatrix, criteriaWeights, subcriteriaPairWise);
     steps.push({
         title: "Consistency Ratio",
         data: consistencyRatio,
     });
 
-    // Step 6: Calculate Subcriteria Weights without Consistency Ratios
-
+    // Step 6: Hitung bobot subkriteria tanpa memeriksa Consistency Ratio
     const subcriteriaResults = subcriteriaPairWise.map((subMatrix, index) => {
-        // Step 6.1: Normalize the subcriteria pairwise matrix
+        // Step 6.1: Normalisasi matriks perbandingan berpasangan untuk subkriteria
         const normalizedSubMatrix = normalizeMatrixAHP(convertToPairwiseObject(subMatrix));
         steps.push({
             title: `Normalized Subcriteria Pairwise Matrix ${index + 1}`,
             data: normalizedSubMatrix,
         });
 
-        // Step 6.2: Calculate weights for the subcriteria
+        // Step 6.2: Menghitung bobot untuk subkriteria
         const subcriteriaWeights = calculateWeights(normalizedSubMatrix);
-
-
         steps.push({
             title: `Subcriteria Weights ${index + 1}`,
             data: subcriteriaWeights,
@@ -57,25 +55,23 @@ export function calculateAHP(input) {
         return subcriteriaWeights;
     });
 
-    console.log("criteria weight :", criteriaWeights)
-    console.log("SUBcriteria weight :", subcriteriaResults)
-
+    // Step 7: Menghitung agregasi bobot subkriteria
     const aggregatedWeights = calculateAggregateSubcriteriaWeights(criteriaWeights, subcriteriaResults);
+
+    // Step 8: Menghitung bobot akhir untuk subkriteria
     const FinalWeights = aggregateFinalWeights(aggregatedWeights)
     steps.push({
         title: "Final Subcriteria Weights",
         data: FinalWeights,
     });
 
-
-    // Step 9: Rank the final scores
+    // Step 9: Peringkatkan alternatif berdasarkan bobot akhir
     const ranking = rankAlternatives(FinalWeights);
     steps.push({
         title: "Final Ranking AHP",
         data: ranking,
     });
 
-    // Return the detailed steps and the ranking result
     return {
         steps,
         result: ranking,
@@ -83,6 +79,7 @@ export function calculateAHP(input) {
 
 }
 
+// Fungsi untuk memastikan matriks perbandingan berpasangan lengka
 function ensureCompletePairwiseMatrix(pairWise) {
     const criteria = new Set();
     pairWise.forEach(item => {
@@ -93,15 +90,19 @@ function ensureCompletePairwiseMatrix(pairWise) {
     const completeMatrix = [];
     criteria.forEach(i => {
         criteria.forEach(j => {
+
+            // Jika criterion A dan B sama, maka nilainya 1 (perbandingan dengan dirinya sendiri)
             if (i === j) {
                 completeMatrix.push({ criterionA: i, criterionB: j, value: 1 });
             } else {
+                // Mencari perbandingan yang sudah ada
                 const existingComparison = pairWise.find(
                     item => item.criterionA === i && item.criterionB === j
                 );
                 if (existingComparison) {
                     completeMatrix.push(existingComparison);
-                } else {
+                } else { 
+                    // Jika perbandingan tidak ditemukan, gunakan nilai kebalikan dari perbandingan yang ada
                     const reverseComparison = pairWise.find(
                         item => item.criterionA === j && item.criterionB === i
                     );
@@ -122,56 +123,46 @@ function ensureCompletePairwiseMatrix(pairWise) {
     return completeMatrix;
 }
 
+// Fungsi untuk mengurutkan alternatif berdasarkan bobot akhir
 function rankAlternatives(aggregatedWeights) {
-    // Ubah objek ke array [key, value] untuk pengurutan
     const weightArray = Object.entries(aggregatedWeights);
-
-    // Urutkan array berdasarkan nilai (value) dari yang terbesar ke terkecil
     weightArray.sort((a, b) => b[1] - a[1]);
-
-    // Format hasil menjadi objek dengan urutan yang diinginkan
     const rankedWeights = {};
     weightArray.forEach(([key, value], index) => {
         rankedWeights[key] = {
             weight: value,
-            rank: index + 1 // Menambahkan peringkat (1, 2, 3, ...)
+            rank: index + 1
         };
     });
 
     return rankedWeights;
 }
 
+// Fungsi untuk mengagregasi bobot akhir subkriteria
 function aggregateFinalWeights(aggregatedWeights) {
     const finalWeights = {};
 
-    // Iterasi melalui semua bobot agregat
     Object.keys(aggregatedWeights).forEach((key) => {
-        const [criterion, subcriterion] = key.split('_'); // Memisahkan C1, S1
-        // Jika finalWeights untuk subcriterion belum ada, inisialisasi dengan 0
+        const [criterion, subcriterion] = key.split('_');
         if (!finalWeights[subcriterion]) {
             finalWeights[subcriterion] = 0;
         }
-        // Jumlahkan bobot ke finalWeights berdasarkan subcriterion
         finalWeights[subcriterion] += aggregatedWeights[key];
     });
 
     return finalWeights;
 }
 
+// Fungsi untuk menghitung agregasi bobot subkriteria berdasarkan bobot kriteria utama
 function calculateAggregateSubcriteriaWeights(criteriaWeights, subcriteriaWeights) {
     const aggregateWeights = {};
 
-    // Iterate through each criterion and its subcriteria weights
     Object.keys(criteriaWeights).forEach((criterionKey, index) => {
         const criterionWeight = criteriaWeights[criterionKey];
         const subWeights = subcriteriaWeights[index];
 
-        // Calculate the aggregate weight for each subcriterion under this criterion
         Object.keys(subWeights).forEach((subKey) => {
-            // Aggregate weight = criterion weight * subcriterion weight
             const aggregateWeight = criterionWeight * subWeights[subKey];
-
-            // Save the aggregate weight in the result object
             aggregateWeights[`C${index + 1}_A${subKey}`] = aggregateWeight;
         });
     });
@@ -179,6 +170,7 @@ function calculateAggregateSubcriteriaWeights(criteriaWeights, subcriteriaWeight
     return aggregateWeights;
 }
 
+// Fungsi untuk mengonversi matriks ke dalam objek pairwise
 function convertToPairwiseObject(matrix) {
     const pairWiseArray = [];
     matrix.forEach((row, rowIndex) => {
@@ -193,19 +185,10 @@ function convertToPairwiseObject(matrix) {
     return pairWiseArray;
 }
 
-function multiplyMatrixByVector(matrix, vector) {
-    return matrix.map(row =>
-        row.reduce((sum, value, index) => sum + value * vector[index], 0)
-    );
-}
-
-
-// Normalize Pairwise Matrix in AHP
+// Fungsi untuk normalisasi matriks perbandingan berpasangan AHP
 function normalizeMatrixAHP(pairWise) {
-    // Find all unique criteria to form columns
     const criteria = [...new Set(pairWise.map(item => item.criterionB))];
 
-    // Initialize an object to store the sum of each column
     const columnSums = {};
     criteria.forEach(criterion => {
         columnSums[criterion] = pairWise
@@ -213,7 +196,6 @@ function normalizeMatrixAHP(pairWise) {
             .reduce((sum, item) => sum + item.value, 0);
     });
 
-    // Normalize each value in pairWise based on the column sum
     const normalizedPairWise = pairWise.map(item => ({
         criterionA: item.criterionA,
         criterionB: item.criterionB,
@@ -223,20 +205,16 @@ function normalizeMatrixAHP(pairWise) {
     return normalizedPairWise;
 }
 
-
-// Calculate Criteria Weights (Eigenvector)
+// Fungsi untuk menghitung bobot kriteria dari matriks perbandingan berpasangan yang sudah dinormalisasi
 function calculateWeights(normalizedMatrix) {
-    // Find all unique criteria (rows) based on criterionA
     const criteria = [...new Set(normalizedMatrix.map(item => item.criterionA))];
 
-    // Initialize an object to store the average (weight) of each row
     const weights = {};
     criteria.forEach(criterion => {
         const rowValues = normalizedMatrix
             .filter(item => item.criterionA === criterion)
             .map(item => item.value);
 
-        // Calculate the average of each row
         const rowAverage = rowValues.reduce((sum, value) => sum + value, 0) / rowValues.length;
         weights[criterion] = rowAverage;
     });
@@ -244,34 +222,25 @@ function calculateWeights(normalizedMatrix) {
     return weights;
 }
 
-
-// Calculate Consistency Ratio to ensure judgments are consistent
+// Fungsi untuk menghitung Consistency Ratio (Rasio Konsistensi) AHP
 function calculateConsistencyRatio(pairWise, weights, sub) {
-    // Find the unique criteria
     const criteria = [...new Set(pairWise.map(item => item.criterionA))];
     const n = criteria.length;
 
-    // Calculate lambda max (λ_max)
+    // Menghitung Lambda max untuk setiap kriteria
     let lambdaMax = 0;
     criteria.forEach(criterion => {
-        // Get all values for the current criterion (row) and multiply by corresponding weights
         const rowSum = pairWise
             .filter(item => item.criterionA === criterion)
             .reduce((sum, item) => sum + item.value * weights[item.criterionB], 0);
 
-        // Divide the sum by the weight of the criterion
         lambdaMax += rowSum / weights[criterion];
     });
     lambdaMax /= n;
 
-    // Calculate the Consistency Index (CI)
-    const CI = (lambdaMax - n) / (n - 1);
-
-    // Get the Random Consistency Index (RI) using the function you created
-    const RI = getRandomIndex(n);
-
-    // Calculate the Consistency Ratio (CR)
-    const CR = CI / RI;
+    const CI = (lambdaMax - n) / (n - 1);       // Menghitung Consistency Index
+    const RI = getRandomIndex(n);               // Menggunakan nilai acuan untuk Random Index (RI)
+    const CR = CI / RI;                         // Menghitung Consistency Ratio
     console.log(sub)
     return {
         lambdaMax: lambdaMax,
@@ -280,11 +249,11 @@ function calculateConsistencyRatio(pairWise, weights, sub) {
     };
 }
 
-// Random Consistency Index values based on matrix size
+// Fungsi untuk mendapatkan Random Index (RI) dari tabel yang telah ditentukan
 function getRandomIndex(size) {
     const randomIndexValues = {
         1: 0.00, 2: 0.00, 3: 0.58, 4: 0.90, 5: 1.12, 6: 1.24,
         7: 1.32, 8: 1.41, 9: 1.45, 10: 1.49
     };
-    return randomIndexValues[size] || 1.49; // Return 1.49 for sizes > 10
+    return randomIndexValues[size] || 1.49;
 }

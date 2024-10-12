@@ -50,11 +50,13 @@ export function calculateWP(input) {
     };
 }
 
+// Normalisasi bobot untuk membuat total bobot = 1.
 function normalizeWeights(weights) {
     const sum = weights.reduce((a, b) => a + b, 0);
     return weights.map((w) => w / sum);
 }
 
+// Normalisasi matriks nilai alternatif berdasarkan tipe kriteria 'benefit' atau 'cost'.
 function normalizeMatrix(values, weights, types) {
     return values.map((row) =>
         row.map((val, j) => {
@@ -63,17 +65,20 @@ function normalizeMatrix(values, weights, types) {
     );
 }
 
+// Fungsi untuk menghitung vektor S.
 function calculateVectorS(normalizedMatrix, types) {
     return normalizedMatrix.map((row) =>
         row.reduce((acc, val) => acc * val, 1)
     );
 }
 
+// Fungsi untuk menghitung vektor V.
 function calculateVectorV(vectorS) {
     const sum = vectorS.reduce((a, b) => a + b, 0);
     return vectorS.map((s) => s / sum);
 }
 
+// Fungsi untuk meranking alternatif berdasarkan nilai vektor V.
 function rankAlternatives(vectorV) {
     return vectorV
         .map((v, i) => ({ index: i + 1, value: v }))
