@@ -40,7 +40,7 @@ const Footer = () => {
             imageUrl: anggaImage
         },
         {
-            name: "Devalco Agazan",
+            name: "Devalco Aghazzan",
             role: "UI/UX Designer",
             imageUrl: devalcoImage
         }
