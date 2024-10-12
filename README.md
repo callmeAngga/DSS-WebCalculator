@@ -2,6 +2,8 @@
 
 This web-based application is designed to assist users in making complex decisions using multiple criteria decision making (MCDM) methods. It integrates four popular MCDM techniques: SAW (Simple Additive Weighting), WP (Weighted Product), TOPSIS (Technique for Order of Preference by Similarity to Ideal Solution), and AHP (Analytical Hierarchy Process).
 
+Live version of the application: [Live Demo](https://dss-web-calculator.vercel.app/)
+
 ## Features
 
 - User-friendly interface for inputting criteria, alternatives, and weights
